@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Fake Product Identification</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+          <a class="navbar-brand" href="index.html">Fake Product Identification</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span class="fa fa-bars"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+              <li class="nav-item"><a href="manufacturer.html" class="nav-link">Manufacturer</a></li>
+              <li class="nav-item"><a href="seller.html" class="nav-link">Seller</a></li>
+              <li class="nav-item"><a href="consumer.html" class="nav-link">Consumer</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Verify Product Section -->
+      <section>
+        <div class="container">
+          <center><h2>Verify Products</h2></center>
+
+          <section>
+            <div class="container-fluid">
+              <center>
+                <div id="qr-reader" style="width:300px"></div>
+                <div id="qr-reader-results"></div>
+              </center>
+            </div>
+          </section>
+
+          <div class="form-group">
+            <label for="Product SN">Product SN:</label>
+            <input disabled type="text" class="form-control" id="productSN" placeholder="Enter Product SN" name="productSN">
+
+            
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-register" id="register">Get Product Status</button>
+        </div>
+      </section>
+      
+
+      <!-- Scripts -->
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="js/popper.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/main.js"></script>
+      <script src="js/web3.min.js"></script>
+      <script src="js/truffle-contract.js"></script>
+      <script src="js/verifyProduct.js"></script>
+      <script src="https://unpkg.com/html5-qrcode"></script>
+      
+      <script>
+        var decodedText = "Enter Product SN";
+        function docReady(fn) {
+          if (document.readyState === "complete" || document.readyState === "interactive") {
+            setTimeout(fn, 1);
+          } else {
+            document.addEventListener("DOMContentLoaded", fn);
+          }
+        }
+
+        docReady(function () {
+          var resultContainer = document.getElementById('qr-reader-results');
+          var lastResult, countResults = 0;
+
+          function onScanSuccess(decodedText, decodedResult) {
+            if (decodedText !== lastResult) {
+              ++countResults;
+              lastResult = decodedText;
+              var audio = new Audio('beep.wav');
+              audio.play();
+              document.getElementById('qr-reader-results').innerHTML = decodedText;
+              document.getElementById("productSN").value = decodedText;
+            }
+          }
+
+          var html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
+          html5QrcodeScanner.render(onScanSuccess);
+        });
+      </script>
+  </body>
+</html>

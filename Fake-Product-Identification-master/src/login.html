@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="width: 400px;">
+            <h3 class="text-center">Login</h3>
+            
+            <form id="loginForm">
+                <!-- Role Selection -->
+                <div class="mb-3">
+                    <label class="form-label">Select Role</label>
+                    <select class="form-control" id="roleSelect" required>
+                        <option value="">Choose...</option>
+                        <option value="manufacturer">Manufacturer</option>
+                        <option value="seller">Seller</option>
+                        <option value="consumer">Consumer</option>
+                    </select>
+                </div>
+
+                <!-- Manufacturer Fields -->
+                <div id="manufacturerFields" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="manufacturerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="manufacturerPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Manufacture ID</label>
+                        <input type="text" class="form-control" id="companyID" required>
+                    </div>
+                </div>
+
+                <!-- Seller Fields -->
+                <div id="sellerFields" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="sellerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="sellerPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Store ID</label>
+                        <input type="text" class="form-control" id="storeID" required>
+                    </div>
+                </div>
+
+                <!-- Consumer Fields -->
+                <div id="consumerFields" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="consumerEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="consumerPassword" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+                <p class="text-center mt-2">Don't have an account? <a href="signup.html">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("roleSelect").addEventListener("change", function () {
+            let role = this.value;
+            
+            // Hide all fields first
+            document.getElementById("manufacturerFields").classList.add("d-none");
+            document.getElementById("sellerFields").classList.add("d-none");
+            document.getElementById("consumerFields").classList.add("d-none");
+            
+            // Clear all input fields
+            document.querySelectorAll("#loginForm input").forEach(input => input.value = "");
+            
+            // Show selected role fields
+            if (role) {
+                document.getElementById(role + "Fields").classList.remove("d-none");
+            }
+        });
+        
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            // Get form data
+            const role = document.getElementById("roleSelect").value;
+            let email, password, idField;
+            
+            if (role === "manufacturer") {
+                email = document.getElementById("manufacturerEmail").value;
+                password = document.getElementById("manufacturerPassword").value;
+                idField = document.getElementById("companyID").value;
+            } else if (role === "seller") {
+                email = document.getElementById("sellerEmail").value;
+                password = document.getElementById("sellerPassword").value;
+                idField = document.getElementById("storeID").value;
+            } else if (role === "consumer") {
+                email = document.getElementById("consumerEmail").value;
+                password = document.getElementById("consumerPassword").value;
+            }
+            
+            const data = {
+                role,
+                email,
+                password,
+                idField
+            };
+            
+            // Send data to the backend for validation
+            fetch("http://localhost:5000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "Login successful") {
+                    alert("Login successful!");
+                    window.location.href = "dashboard.html";  // Redirect to a dashboard or home page
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+            });
+        });
+    </script>
+</body>
+</html>
